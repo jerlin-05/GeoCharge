@@ -5,50 +5,89 @@ import Hero from "./components/Hero";
 import SearchBar from "./components/SearchBar";
 import Loader from "./components/Loader";
 import AdminDrawer from "./components/AdminDrawer";
-
 import AnalysisDashboard from "./components/dashboard/AnalysisDashboard";
 
 function App() {
+
   const [loading, setLoading] = useState(false);
+
   const [showDashboard, setShowDashboard] = useState(false);
 
-  const handleAnalyze = (location) => {
-    console.log("Location:", location);
+  const [adminOpen, setAdminOpen] = useState(false);
 
-    // Hide previous dashboard
+  const [location, setLocation] = useState("");
+
+  const [report, setReport] = useState({
+  projectScore: "91%",
+  risk: "A+",
+  revenue: "₹2.64 L",
+  demand: "High",
+
+  coordinates: {
+    lat: 10.0159,
+    lng: 76.3419,
+  },
+
+  recommendation:
+    "Excellent location for EV charging deployment due to high traffic density, strong commercial activity and excellent grid readiness.",
+});
+  const handleAnalyze = (inputLocation) => {
+
+    if (!inputLocation.trim()) {
+      alert("Please enter a Google Maps URL or Coordinates.");
+      return;
+    }
+
+    setLocation(inputLocation);
+
     setShowDashboard(false);
 
-    // Show loader
     setLoading(true);
 
-    // Simulate backend request
     setTimeout(() => {
+
       setLoading(false);
+
       setShowDashboard(true);
+
     }, 2000);
+
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      {/* Navbar */}
-      <Navbar />
 
-      {/* Hero */}
+    <div className="min-h-screen bg-slate-950 text-white">
+
+      <Navbar
+        onOpenAdmin={() => setAdminOpen(true)}
+      />
+
       <Hero />
 
-      {/* Search */}
-      <SearchBar onAnalyze={handleAnalyze} />
+      <SearchBar
+        onAnalyze={handleAnalyze}
+      />
 
-      {/* Loading Animation */}
       {loading && <Loader />}
 
-      {/* Dashboard */}
-      {showDashboard && <AnalysisDashboard />}
+      {showDashboard && (
 
-      {/* Admin Panel */}
-      <AdminDrawer />
+        <AnalysisDashboard
+          location={location}
+          report={report}
+        />
+
+      )}
+
+      <AdminDrawer
+        open={adminOpen}
+        onClose={() => setAdminOpen(false)}
+      />
+
     </div>
+
   );
+
 }
 
 export default App;

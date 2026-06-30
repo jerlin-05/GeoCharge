@@ -3,13 +3,36 @@ import { useState } from "react";
 function SearchBar({ onAnalyze }) {
   const [location, setLocation] = useState("");
 
+  const isCoordinate = (text) => {
+    const regex =
+      /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
+
+    return regex.test(text);
+  };
+
+  const isGoogleMaps = (text) => {
+    return (
+      text.includes("google.com/maps") ||
+      text.includes("maps.app.goo.gl")
+    );
+  };
+
   const handleClick = () => {
-    if (!location.trim()) {
-      alert("Please enter a Google Maps URL or coordinates.");
+    const input = location.trim();
+
+    if (!input) {
+      alert("Please enter a location.");
       return;
     }
 
-    onAnalyze(location);
+    if (!isCoordinate(input) && !isGoogleMaps(input)) {
+      alert(
+        "Please enter a valid Google Maps URL or Latitude,Longitude."
+      );
+      return;
+    }
+
+    onAnalyze(input);
   };
 
   return (
@@ -21,7 +44,7 @@ function SearchBar({ onAnalyze }) {
           type="text"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          placeholder="Paste Google Maps URL or Enter Coordinates"
+          placeholder="Paste Google Maps URL or Latitude,Longitude"
           className="flex-1 bg-transparent outline-none px-4 py-4"
         />
 
